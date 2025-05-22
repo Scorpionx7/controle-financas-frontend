@@ -1,0 +1,25 @@
+<h2>Cadastrar Novo Cartão de Crédito</h2>
+
+<form (ngSubmit)="onSubmit()">
+  <div>
+    <label for="nomeCartao">Nome do Cartão:</label>
+    <input type="text" id="nomeCartao" name="nomeCartao" [(ngModel)]="novoCartao.nome" required>
+  </div>
+
+  <div>
+    <label for="limiteCartao">Limite do Cartão:</label>
+    <input type="number" id="limiteCartao" name="limiteCartao" [(ngModel)]="novoCartao.limite" required>
+  </div>
+
+  <div>
+    <label for="contaAssociada">Associar à Conta:</label>
+    <select id="contaAssociada" name="contaAssociada" [(ngModel)]="contaSelecionadaId">
+      <option [ngValue]="undefined" disabled>Selecione uma conta (Opcional)</option>
+      <option *ngFor="let conta of contasDisponiveis" [ngValue]="conta.id">
+        {{ conta.nome }}
+      </option>
+    </select>
+  </div>
+
+  <button type="submit">Salvar Cartão</button>
+</form>

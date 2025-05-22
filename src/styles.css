@@ -1,1 +1,115 @@
-/* You can add global styles to this file, and also import other style files */
+/* src/styles.css */
+
+/* Estilos globais para o corpo da página e elementos HTML */
+body {
+  font-family: "Arial", sans-serif;
+  margin: 0;
+  padding: 20px;
+  background-color: #f4f4f9; /* Cor de fundo suave */
+  color: #333;
+}
+
+/* Estilo para o contêiner principal */
+main {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+h1, h2 {
+  color: #2c3e50;
+  margin-bottom: 20px;
+}
+
+/* Estilo para a navegação (links) */
+nav {
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+nav a {
+  text-decoration: none;
+  color: #007bff;
+  margin-right: 15px;
+  font-weight: bold;
+}
+
+nav a:hover {
+  color: #0056b3;
+  text-decoration: underline;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid #eee;
+  margin: 20px 0;
+}
+
+/* Estilos para formulários e seus elementos */
+form div {
+  margin-bottom: 15px;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #555;
+}
+
+input[type="text"],
+input[type="number"] {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
+  box-sizing: border-box; /* Garante que padding e border não aumentem a largura total */
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Estilos para botões */
+button {
+    font-size: 14px;
+    background-color: #4CAF50; /* Cor primária, similar ao JavaFX */
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #45a049; /* Cor de hover */
+}
+
+/* Estilos para a lista de contas */
+ul {
+  list-style: none; /* Remove os marcadores de lista padrão */
+  padding: 0;
+  margin: 0;
+}
+
+li {
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 5px;
+  padding: 15px;
+  margin-bottom: 10px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+li strong {
+  color: #333;
+}

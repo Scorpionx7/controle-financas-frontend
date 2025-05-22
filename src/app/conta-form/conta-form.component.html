@@ -1,0 +1,25 @@
+<h2>Cadastrar Nova Conta</h2>
+
+<form (ngSubmit)="onSubmit()">
+  <div>
+    <label for="nome">Nome da Conta:</label>
+    <input type="text" id="nome" name="nome" [(ngModel)]="novaConta.nome" required>
+  </div>
+
+  <div>
+    <label for="saldo">Saldo Inicial:</label>
+    <input type="number" id="saldo" name="saldo" [(ngModel)]="novaConta.saldo" required>
+  </div>
+
+  <div>
+    <label for="limite">Limite:</label>
+    <input type="number" id="limite" name="limite" [(ngModel)]="novaConta.limite" required>
+  </div>
+
+  <div>
+    <label for="valeAlimentacao">Vale Alimentação:</label>
+    <input type="number" id="valeAlimentacao" name="valeAlimentacao" [(ngModel)]="novaConta.valeAlimentacao" required>
+  </div>
+
+  <button type="submit">Salvar Conta</button>
+</form>
