@@ -2,10 +2,10 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { CartaoDeCredito } from '../models/cartao.model'; // Importa a interface CartaoDeCredito
-import { CartaoService } from '../services/cartao.service'; // Importa o serviço de cartões
-import { Conta } from '../models/conta.model'; // Importa a interface Conta
-import { ContaService } from '../services/conta.service'; // Importa o serviço de contas
+import { CartaoDeCredito } from '../models/cartao.model';
+import { CartaoService } from '../services/cartao.service';
+import { Conta } from '../models/conta.model';
+import { ContaService } from '../services/conta.service';
 
 @Component({
   selector: 'app-cartao-form',
@@ -18,24 +18,26 @@ export class CartaoFormComponent implements OnInit {
   novoCartao: CartaoDeCredito = {
     nome: '',
     limite: 0,
-    gastoAtual: 0 // Gasto inicial é zero
+    gastoAtual: 0
   };
-  contasDisponiveis: Conta[] = []; // Para preencher o ComboBox de contas
-  contaSelecionadaId: number | undefined; // Para armazenar o ID da conta selecionada
+  contasDisponiveis: Conta[] = [];
+  contaSelecionada: Conta | null = null; 
 
   constructor(
     private cartaoService: CartaoService,
-    private contaService: ContaService // Injeta o ContaService para buscar contas
+    private contaService: ContaService
   ) { }
 
   ngOnInit(): void {
-    this.carregarContas(); // Carrega as contas ao iniciar o componente
+    this.carregarContas();
   }
 
   carregarContas(): void {
     this.contaService.getContas().subscribe({
       next: (data) => {
         this.contasDisponiveis = data;
+        // Se houver contas, você pode querer pré-selecionar a primeira ou nenhuma
+        // this.contaSelecionada = data.length > 0 ? data[0] : null;
         console.log('Contas disponíveis para associação:', data);
       },
       error: (error) => {
@@ -46,49 +48,48 @@ export class CartaoFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    // Primeiro, salve o cartão
+    if (!this.novoCartao.nome || this.novoCartao.limite <= 0) {
+      alert('Por favor, preencha o nome e um limite válido para o cartão.');
+      return;
+    }
+
     this.cartaoService.salvarCartao(this.novoCartao).subscribe({
       next: (cartaoSalvo) => {
         console.log('Cartão salvo com sucesso:', cartaoSalvo);
-        alert('Cartão salvo com sucesso!');
 
-        // Tenta vincular o cartão APENAS se uma conta foi selecionada E o cartão foi salvo com um ID
-        if (this.contaSelecionadaId !== undefined && cartaoSalvo.id !== undefined) {
-          this.cartaoService.vincularCartaoAConta(this.contaSelecionadaId, cartaoSalvo.id).subscribe({
+        // AQUI A MUDANÇA: usa o ID da conta selecionada e o ID do cartão salvo
+        if (this.contaSelecionada && this.contaSelecionada.id !== undefined && cartaoSalvo.id !== undefined) {
+          this.cartaoService.vincularCartaoAConta(this.contaSelecionada.id, cartaoSalvo.id).subscribe({
             next: () => {
-              console.log('Cartão vinculado à conta com sucesso!');
-              alert('Cartão vinculado à conta com sucesso!');
-              // Após vincular, resetar para limpar o formulário
+              alert('Cartão salvo e vinculado à conta com sucesso!');
               this.resetForm();
             },
             error: (error) => {
               console.error('Erro ao vincular cartão à conta:', error);
-              // Erro pode ser mais específico se o backend retornar uma mensagem
-              alert('Erro ao vincular cartão: ' + (error.error?.message || error.message));
-              // Opcional: Se a vinculação falhar, você pode decidir se quer resetar o formulário ou não
+              const errorMessage = error.error?.message || 'Erro desconhecido ao vincular cartão.';
+              alert('Cartão salvo, mas houve um erro ao vincular: ' + errorMessage);
               this.resetForm();
             }
           });
         } else {
-          // Se nenhuma conta foi selecionada ou o cartão não tem ID (o que seria um erro)
-          console.log('Cartão salvo, mas não vinculado (nenhuma conta selecionada ou ID do cartão ausente).');
-          this.resetForm(); // Resetar de qualquer forma
+          alert('Cartão salvo com sucesso! Nenhuma conta foi selecionada para vincular.');
+          this.resetForm();
         }
       },
       error: (error) => {
         console.error('Erro ao salvar cartão:', error);
-        alert('Erro ao salvar cartão: ' + (error.error?.message || error.message));
+        const errorMessage = error.error?.message || 'Erro desconhecido ao salvar cartão.';
+        alert('Erro ao salvar cartão: ' + errorMessage);
       }
     });
   }
 
-// Adicione um método para resetar o formulário
   resetForm(): void {
     this.novoCartao = {
       nome: '',
       limite: 0,
       gastoAtual: 0
     };
-    this.contaSelecionadaId = undefined; // Reseta a seleção do dropdown
+    this.contaSelecionada = null; // Reseta a seleção do dropdown para null
   }
 }

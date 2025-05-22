@@ -13,9 +13,9 @@
 
   <div>
     <label for="contaAssociada">Associar à Conta:</label>
-    <select id="contaAssociada" name="contaAssociada" [(ngModel)]="contaSelecionadaId">
-      <option [ngValue]="undefined" disabled>Selecione uma conta (Opcional)</option>
-      <option *ngFor="let conta of contasDisponiveis" [ngValue]="conta.id">
+    <select id="contaAssociada" name="contaAssociada" [(ngModel)]="contaSelecionada">
+      <option [ngValue]="null" disabled>Selecione uma conta (Opcional)</option>
+      <option *ngFor="let conta of contasDisponiveis" [ngValue]="conta">
         {{ conta.nome }}
       </option>
     </select>
