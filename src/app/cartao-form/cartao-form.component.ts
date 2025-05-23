@@ -6,6 +6,8 @@ import { CartaoDeCredito } from '../models/cartao.model';
 import { CartaoService } from '../services/cartao.service';
 import { Conta } from '../models/conta.model';
 import { ContaService } from '../services/conta.service';
+import { ActivatedRoute, Router } from '@angular/router'; // IMPORTAR ActivatedRoute e Router
+import { Observable } from 'rxjs'; // IMPORTAR Observable
 
 @Component({
   selector: 'app-cartao-form',
@@ -15,81 +17,117 @@ import { ContaService } from '../services/conta.service';
   styleUrl: './cartao-form.component.css'
 })
 export class CartaoFormComponent implements OnInit {
-  novoCartao: CartaoDeCredito = {
+  cartao: CartaoDeCredito = { // Renomeado de novoCartao para cartao
     nome: '',
     limite: 0,
     gastoAtual: 0
   };
   contasDisponiveis: Conta[] = [];
-  contaSelecionada: Conta | null = null; 
+  contaSelecionada: Conta | null = null;
+  isEditMode: boolean = false; // Flag para saber se está editando ou criando
+  cartaoId: number | null = null; // Para armazenar o ID do cartão em edição
 
   constructor(
     private cartaoService: CartaoService,
-    private contaService: ContaService
+    private contaService: ContaService,
+    private route: ActivatedRoute, // Para acessar parâmetros da rota
+    private router: Router // Para navegação programática
   ) { }
 
   ngOnInit(): void {
     this.carregarContas();
+
+    // Verifica se há um ID na URL (modo de edição)
+    const idParam = this.route.snapshot.paramMap.get('id');
+    if (idParam) {
+      this.cartaoId = +idParam; // Converte string para number
+      this.isEditMode = true;
+      this.carregarCartao(this.cartaoId); // Carrega os dados do cartão para edição
+    }
   }
 
   carregarContas(): void {
     this.contaService.getContas().subscribe({
-      next: (data) => {
+      next: (data: Conta[]) => {
         this.contasDisponiveis = data;
-        // Se houver contas, você pode querer pré-selecionar a primeira ou nenhuma
-        // this.contaSelecionada = data.length > 0 ? data[0] : null;
         console.log('Contas disponíveis para associação:', data);
+        // Se estiver em modo de edição e o cartão já tiver uma conta associada, pré-selecionar
+        if (this.isEditMode && this.cartao.conta && this.cartao.conta.id) {
+            this.contaSelecionada = this.contasDisponiveis.find(c => c.id === this.cartao.conta?.id) || null;
+        }
       },
-      error: (error) => {
+      error: (error: any) => {
         console.error('Erro ao carregar contas para associação:', error);
         alert('Erro ao carregar contas: ' + (error.error?.message || error.message));
       }
     });
   }
 
+  carregarCartao(id: number): void {
+    this.cartaoService.getCartaoById(id).subscribe({
+      next: (data: CartaoDeCredito) => {
+        this.cartao = data; // Preenche o formulário com os dados do cartão
+        // Tenta pré-selecionar a conta se ela já estiver carregada
+        if (this.cartao.conta && this.cartao.conta.id && this.contasDisponiveis.length > 0) {
+            this.contaSelecionada = this.contasDisponiveis.find(c => c.id === this.cartao.conta?.id) || null;
+        }
+      },
+      error: (error: any) => {
+        console.error('Erro ao carregar cartão para edição:', error);
+        alert('Erro ao carregar cartão: ' + (error.error?.message || error.message));
+        this.router.navigate(['/cartoes']); // Redireciona se não conseguir carregar
+      }
+    });
+  }
+
+
   onSubmit(): void {
-    if (!this.novoCartao.nome || this.novoCartao.limite <= 0) {
-      alert('Por favor, preencha o nome e um limite válido para o cartão.');
-      return;
+    let operation: Observable<CartaoDeCredito>;
+
+    if (this.isEditMode && this.cartaoId !== null && this.cartaoId > 0) {
+      operation = this.cartaoService.atualizarCartao(this.cartaoId, this.cartao); // ATUALIZAR
+    } else {
+      operation = this.cartaoService.salvarCartao(this.cartao); // SALVAR (NOVO)
     }
 
-    this.cartaoService.salvarCartao(this.novoCartao).subscribe({
-      next: (cartaoSalvo) => {
-        console.log('Cartão salvo com sucesso:', cartaoSalvo);
+    operation.subscribe({
+      next: (cartaoSalvo: CartaoDeCredito) => { // Tipagem explícita
+        const message = this.isEditMode ? 'Cartão atualizado com sucesso!' : 'Cartão salvo com sucesso!';
+        console.log(message, cartaoSalvo);
 
-        // AQUI A MUDANÇA: usa o ID da conta selecionada e o ID do cartão salvo
+        // Vinculação da conta (se selecionada)
         if (this.contaSelecionada && this.contaSelecionada.id !== undefined && cartaoSalvo.id !== undefined) {
           this.cartaoService.vincularCartaoAConta(this.contaSelecionada.id, cartaoSalvo.id).subscribe({
             next: () => {
-              alert('Cartão salvo e vinculado à conta com sucesso!');
-              this.resetForm();
+              alert(message + ' E vinculado à conta com sucesso!');
+              this.router.navigate(['/cartoes']);
             },
-            error: (error) => {
+            error: (error: any) => {
               console.error('Erro ao vincular cartão à conta:', error);
-              const errorMessage = error.error?.message || 'Erro desconhecido ao vincular cartão.';
-              alert('Cartão salvo, mas houve um erro ao vincular: ' + errorMessage);
-              this.resetForm();
+              alert(message + ' Mas houve um erro ao vincular: ' + (error.error?.message || error.message));
+              this.router.navigate(['/cartoes']);
             }
           });
         } else {
-          alert('Cartão salvo com sucesso! Nenhuma conta foi selecionada para vincular.');
-          this.resetForm();
+          alert(message);
+          this.router.navigate(['/cartoes']); // Redireciona após salvar/atualizar
         }
       },
-      error: (error) => {
-        console.error('Erro ao salvar cartão:', error);
-        const errorMessage = error.error?.message || 'Erro desconhecido ao salvar cartão.';
-        alert('Erro ao salvar cartão: ' + errorMessage);
+      error: (error: any) => {
+        console.error('Erro ao salvar/atualizar cartão:', error);
+        alert('Erro ao salvar/atualizar cartão: ' + (error.error?.message || error.message));
       }
     });
   }
 
   resetForm(): void {
-    this.novoCartao = {
+    this.cartao = {
       nome: '',
       limite: 0,
       gastoAtual: 0
     };
-    this.contaSelecionada = null; // Reseta a seleção do dropdown para null
+    this.contaSelecionada = null;
+    this.isEditMode = false;
+    this.cartaoId = null;
   }
 }

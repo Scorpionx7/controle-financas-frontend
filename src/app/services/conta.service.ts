@@ -1,34 +1,36 @@
 // src/app/services/conta.service.ts
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http'; // Importa o HttpClient para fazer requisições HTTP
-import { Observable } from 'rxjs'; // Importa Observable para lidar com dados assíncronos
-import { Conta } from '../models/conta.model'; // Importa a interface Conta que você criou
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs'; 
+
+import { Conta } from '../models/conta.model';
 
 @Injectable({
-  providedIn: 'root' // Isso torna o serviço um singleton e disponível em toda a aplicação
+  providedIn: 'root'
 })
 export class ContaService {
 
-  private apiUrl = 'http://localhost:8080/contas'; // URL base da sua API de contas no Spring Boot
+  private apiUrl = 'http://localhost:8080/contas';
 
-  constructor(private http: HttpClient) { } // Injeta o HttpClient
+  constructor(private http: HttpClient) { }
 
-  /**
-   * Busca todas as contas do backend.
-   * @returns Um Observable que emite um array de Contas.
-   */
   getContas(): Observable<Conta[]> {
     return this.http.get<Conta[]>(this.apiUrl);
   }
 
-  /**
-   * Salva uma nova conta no backend.
-   * @param conta O objeto Conta a ser salvo.
-   * @returns Um Observable que emite a Conta salva.
-   */
+  getContaById(id: number): Observable<Conta> { 
+    return this.http.get<Conta>(`${this.apiUrl}/${id}`);
+  }
+
   salvarConta(conta: Conta): Observable<Conta> {
     return this.http.post<Conta>(this.apiUrl, conta);
   }
 
-  // Você pode adicionar outros métodos aqui, como atualizar, buscar por ID, etc.
+  atualizarConta(id: number, conta: Conta): Observable<Conta> { 
+    return this.http.put<Conta>(`<span class="math-inline">\{this\.apiUrl\}/</span>{id}`, conta);
+  }
+
+  deletarConta(id: number): Observable<void> { 
+    return this.http.delete<void>(`<span class="math-inline">\{this\.apiUrl\}/</span>{id}`);
+  }
 }

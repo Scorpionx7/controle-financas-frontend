@@ -18,13 +18,30 @@ export class CartaoService {
     return this.http.get<CartaoDeCredito[]>(this.apiUrl);
   }
 
+  getCartaoById(id: number): Observable<CartaoDeCredito> {
+    return this.http.get<CartaoDeCredito>(`<span class="math-inline">\{this\.apiUrl\}/</span>{id}`);
+  }
+
   salvarCartao(cartao: CartaoDeCredito): Observable<CartaoDeCredito> {
     return this.http.post<CartaoDeCredito>(this.apiUrl, cartao);
+  }
+
+  atualizarCartao(id: number, cartao: CartaoDeCredito): Observable<CartaoDeCredito> {
+    return this.http.put<CartaoDeCredito>(`<span class="math-inline">\{this\.apiUrl\}/</span>{id}`, cartao);
+  }
+
+  deletarCartao(id: number): Observable<void> {
+    return this.http.delete<void>(`<span class="math-inline">\{this\.apiUrl\}/</span>{id}`);
   }
 
   vincularCartaoAConta(contaId: number, cartaoId: number): Observable<string> {
   const url = `http://localhost:8080/contas/${contaId}/cartoes/${cartaoId}`;
   return this.http.post(url, null, { responseType: 'text' });
 }
+
+  quitarParcela(id: number, valorParcela: number): Observable<string> {
+    const url = `<span class="math-inline">\{this\.apiUrl\}/</span>{id}/quitar-parcela?valorParcela=${valorParcela}`;
+    return this.http.post(url, null, { responseType: 'text' });
+  }
 
 }

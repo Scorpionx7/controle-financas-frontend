@@ -13,6 +13,8 @@
       <strong>Limite Disponível:</strong> R$ {{ (cartao.limite - (cartao.gastoAtual || 0)) | number:'1.2-2' }}
       <span *ngIf="cartao.conta"> <br> <strong>Associado à Conta:</strong> {{ cartao.conta.nome }}</span>
       <hr>
+      <button class="edit-button" [routerLink]="['/cartoes/editar', cartao.id]">Editar</button>
+      <button class="delete-button" (click)="deletarCartao(cartao.id)">Deletar</button>
     </li>
   </ul>
 </ng-template>

@@ -12,6 +12,8 @@
       <strong>Limite:</strong> R$ {{ conta.limite | number:'1.2-2' }} <br>
       <strong>Vale Alimentação:</strong> R$ {{ conta.valeAlimentacao | number:'1.2-2' }}
       <hr>
+      <button class="edit-button" [routerLink]="['/contas/editar', conta.id]">Editar</button>
+      <button class="delete-button" (click)="deletarConta(conta.id)">Deletar</button>
     </li>
   </ul>
 </ng-template>
