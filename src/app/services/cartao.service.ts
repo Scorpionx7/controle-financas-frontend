@@ -11,6 +11,7 @@ import { Conta } from '../models/conta.model';
 export class CartaoService {
 
   private apiUrl = 'http://localhost:8080/cartoes';
+  private contasApiUrl = 'http://localhost:8080/contas';
 
   constructor(private http: HttpClient) { }
 
@@ -19,7 +20,7 @@ export class CartaoService {
   }
 
   getCartaoById(id: number): Observable<CartaoDeCredito> {
-    return this.http.get<CartaoDeCredito>(`<span class="math-inline">\{this\.apiUrl\}/</span>{id}`);
+    return this.http.get<CartaoDeCredito>(`${this.apiUrl}/${id}`);
   }
 
   salvarCartao(cartao: CartaoDeCredito): Observable<CartaoDeCredito> {
@@ -27,21 +28,20 @@ export class CartaoService {
   }
 
   atualizarCartao(id: number, cartao: CartaoDeCredito): Observable<CartaoDeCredito> {
-    return this.http.put<CartaoDeCredito>(`<span class="math-inline">\{this\.apiUrl\}/</span>{id}`, cartao);
+    return this.http.put<CartaoDeCredito>(`${this.apiUrl}/${id}`, cartao);
   }
 
   deletarCartao(id: number): Observable<void> {
-    return this.http.delete<void>(`<span class="math-inline">\{this\.apiUrl\}/</span>{id}`);
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 
   vincularCartaoAConta(contaId: number, cartaoId: number): Observable<string> {
-  const url = `http://localhost:8080/contas/${contaId}/cartoes/${cartaoId}`;
-  return this.http.post(url, null, { responseType: 'text' });
-}
-
-  quitarParcela(id: number, valorParcela: number): Observable<string> {
-    const url = `<span class="math-inline">\{this\.apiUrl\}/</span>{id}/quitar-parcela?valorParcela=${valorParcela}`;
+    const url = `${this.contasApiUrl}/${contaId}/cartoes/${cartaoId}`;
     return this.http.post(url, null, { responseType: 'text' });
   }
 
+  quitarParcela(id: number, valorParcela: number): Observable<string> {
+    const url = `${this.apiUrl}/${id}/quitar-parcela?valorParcela=${valorParcela}`;
+    return this.http.post(url, null, { responseType: 'text' });
+  }
 }

@@ -35,23 +35,33 @@ export class ContasListComponent implements OnInit {
   }
   
   deletarConta(id: number | undefined): void {
-    if (id === undefined) {
-      alert('ID da conta é indefinido. Não é possível deletar.');
-      return;
-    }
-
-    if (confirm('Tem certeza que deseja deletar esta conta? Esta ação é irreversível.')) {
-      this.contaService.deletarConta(id).subscribe({
-        next: () => {
-          alert('Conta deletada com sucesso!');
-          this.getContas(); // Recarrega a lista após a exclusão
-        },
-        error: (error) => {
-          console.error('Erro ao deletar conta:', error);
-          alert('Erro ao deletar conta: ' + (error.error?.message || error.message));
-        }
-      });
-    }
+  if (!id) {
+    console.error('ID inválido:', id);
+    return;
   }
+
+  if (confirm('Tem certeza que deseja deletar esta conta?')) {
+    this.contaService.deletarConta(id).subscribe({
+      next: () => {
+        console.log('Conta deletada com sucesso');
+        // Atualiza a lista local sem precisar recarregar do servidor
+        this.contas = this.contas.filter(conta => conta.id !== id);
+      },
+      error: (error) => {
+        console.error('Erro completo:', error);
+        if (error.status === 404) {
+          alert('Conta não encontrada. Talvez já tenha sido deletada.');
+        } else {
+          alert(`Erro ao deletar conta: ${error.message}`);
+        }
+      }
+    });
+  }
+}
+
+debugConta(conta: Conta): void {
+  console.log('Dados da conta sendo editada:', conta);
+  console.log('ID sendo passado:', conta.id);
+}
 
 }

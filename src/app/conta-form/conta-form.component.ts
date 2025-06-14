@@ -41,40 +41,47 @@ export class ContaFormComponent implements OnInit {
   }
 
   carregarConta(id: number): void {
-    this.contaService.getContaById(id).subscribe({
-      next: (data: Conta) => {
-        this.conta = data;
-      },
-      error: (error: any) => {
-        console.error('Erro ao carregar conta para edição:', error);
-        // Mensagem mais clara
-        alert('Erro ao carregar conta para edição. Verifique se o ID está correto ou se a conta existe. Detalhes: ' + (error.message || 'Erro desconhecido.'));
-        this.router.navigate(['/']); // Redireciona para a lista
-      }
-    });
-  }
-
-  onSubmit(): void {
-    let operation: Observable<Conta>;
-
-    // Garante que o contaId é um número válido para edição
-    if (this.isEditMode && this.contaId !== null && this.contaId > 0) {
-      operation = this.contaService.atualizarConta(this.contaId, this.conta);
-    } else {
-      operation = this.contaService.salvarConta(this.conta);
+  console.log('Iniciando carregamento da conta ID:', id);
+  
+  this.contaService.getContaById(id).subscribe({
+    next: (data) => {
+      console.log('Dados recebidos:', data);
+      // Garanta que os dados estão no formato correto
+      this.conta = {
+        id: data.id,
+        nome: data.nome || '',
+        saldo: data.saldo || 0,
+        limite: data.limite || 0,
+        valeAlimentacao: data.valeAlimentacao || 0
+      };
+      console.log('Dados atribuídos ao formulário:', this.conta);
+    },
+    error: (error) => {
+      console.error('Erro detalhado:', error);
+      alert('Conta não encontrada ou erro de conexão');
+      this.router.navigate(['/contas']);
     }
+  });
+}
 
-    operation.subscribe({
-      next: (response: Conta) => {
-        const message = this.isEditMode ? 'Conta atualizada com sucesso!' : 'Conta salva com sucesso!';
-        alert(message);
-        console.log(message, response);
-        this.router.navigate(['/']); // Redireciona para a lista de contas
-      },
-      error: (error: any) => {
-        console.error('Erro ao salvar/atualizar conta:', error);
-        alert('Erro ao salvar/atualizar conta: ' + (error.error?.message || error.message));
-      }
-    });
-  }
+onSubmit(): void {
+  if (!this.conta) return;
+
+  const operation = this.isEditMode && this.contaId 
+    ? this.contaService.atualizarConta(this.contaId, this.conta)
+    : this.contaService.salvarConta(this.conta);
+
+  operation.subscribe({
+    next: (response) => {
+      console.log('Resposta do servidor:', response); // Debug
+      alert(this.isEditMode ? 'Conta atualizada!' : 'Conta criada!');
+      this.router.navigate(['/contas']);
+    },
+    error: (error) => {
+      console.error('Erro completo:', error); // Debug detalhado
+      alert(`Erro: ${error.message || 'Erro desconhecido'}`);
+    }
+  });
+}
+
 }
