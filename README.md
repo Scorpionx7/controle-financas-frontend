@@ -1,59 +1,70 @@
-# ControleFinancasFrontend
+# 💻 Sistema de Controle Financeiro - Frontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.13.
+Este é o repositório do front-end do projeto de Controle Financeiro, desenvolvido em **Angular**. Ele consome a API REST do back-end para fornecer uma interface gráfica amigável e intuitiva para o gerenciamento de finanças pessoais.
 
-## Development server
+-   Acesse o repositório do back-end [**aqui**](https://github.com/Scorpionx7/controle-de-financas).
 
-To start a local development server, run:
+---
 
-```bash
-ng serve
-```
+## 🖼️ Telas (Preview)
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+---
 
-## Code scaffolding
+## 🌟 Funcionalidades
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+-   **Interface amigável e reativa:**
+    -   Visualização clara do saldo disponível para gastos.
+    -   Registro e acompanhamento de despesas mensais de forma intuitiva.
+-   **Gerenciamento de Compras:**
+    -   Controle de parcelas restantes.
+    -   Adição, edição e exclusão de compras.
 
-```bash
-ng generate component component-name
-```
+---
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## 🔧 Tecnologias Utilizadas
 
-```bash
-ng generate --help
-```
+-   **Angular**: Framework principal para a construção da Single Page Application (SPA).
+-   **TypeScript**: Superset do JavaScript que adiciona tipagem estática.
+-   **HTML5 & CSS/SCSS**: Para a estruturação e estilização das páginas.
+-   **RxJS**: Para programação reativa e gerenciamento de eventos assíncronos.
 
-## Building
+---
 
-To build the project run:
+## 🚀 Como Executar o Projeto
 
-```bash
-ng build
-```
+### Pré-requisitos:
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+-   **Node.js** e **npm** instalados.
+-   **Angular CLI** instalado globalmente: `npm install -g @angular/cli`.
+-   **O back-end (API) deve estar em execução**. Siga as instruções [**neste repositório**](https://github.com/Scorpionx7/controle-de-financas) para executá-lo (agora requer PostgreSQL).
 
-## Running unit tests
+### Passos para executar:
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+1.  Clone o repositório:
+    ```bash
+    git clone [https://github.com/Scorpionx7/controle-financas-frontend.git]
+    cd controle-financas-frontend
+    ```
+2.  **Instale as dependências**:
+    ```bash
+    npm install
+    ```
+3.  **Execute a aplicação**:
+    ```bash
+    ng serve
+    ```
+    ou use a flag `-o` para abrir automaticamente no navegador:
+    ```bash
+    ng serve -o
+    ```
+4.  **Acesse a Aplicação**:
+    Abra o navegador e acesse: `http://localhost:4200/`
 
-```bash
-ng test
-```
+---
 
-## Running end-to-end tests
+## 📧 Contato
 
-For end-to-end (e2e) testing, run:
+Entre em contato para dúvidas ou sugestões!
 
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+-   🌐 [**LinkedIn**](https://www.linkedin.com/in/estherrezende/)
+-   📧 **E-mail:** [rezendealvesesther@gmail.com](mailto:rezendealvesesther@gmail.com)
